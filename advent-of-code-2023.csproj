@@ -8,4 +8,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+<ItemGroup>
+    <ProjectReference Include="AdventOfCode\AdventOfCode.csproj" />
+    <ProjectReference Include="AdventOfCode.Tests\AdventOfCode.Tests.csproj" />
+    
+  </ItemGroup>
 </Project>
