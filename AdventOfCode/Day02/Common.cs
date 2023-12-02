@@ -15,6 +15,14 @@ public class Game
   {
     pulls.Add(new Tuple<int, int, int>(r, g, b));
   }
+
+  public long getPower(){
+    var redPower = pulls.Select(i=>i.Item1).Max();
+    var greenPower = pulls.Select(i=>i.Item2).Max();
+    var bluePower = pulls.Select(i=>i.Item3).Max();
+
+    return redPower*greenPower*bluePower;
+  }
 }
 
 public class CubeBag

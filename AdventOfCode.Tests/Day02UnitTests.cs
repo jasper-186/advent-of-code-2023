@@ -26,25 +26,25 @@ public class Day02UnitTests : BaseUnitTests
             Assert.Equal(2149, result);
     }
 
-    // [Fact]
-    // public void Puzzle02SampleUnitTest()
-    // {
-    //     using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+    [Fact]
+    public void Puzzle02SampleUnitTest()
+    {
+        using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
 
-    //         //var logger = Mock.Of<ILogger<Puzzle01>>();
-    //         var puzzle = new Puzzle02(loggerFactory);
-    //         var result = puzzle.solve(baseFilePath + "SampleInputs/Day01.Puzzle02.Input.Sample.txt");
-    //         Assert.Equal(281, result);        
-    // }    
+            //var logger = Mock.Of<ILogger<Puzzle01>>();
+            var puzzle = new Puzzle02(loggerFactory);
+            var result = puzzle.solve(baseFilePath + "SampleInputs/Day02.Puzzle01.Input.Sample.txt");
+            Assert.Equal(2286, result);        
+    }    
 
-    // [Fact]
-    // public void Puzzle02PuzzleUnitTest()
-    // {
-    //     using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+    [Fact]
+    public void Puzzle02PuzzleUnitTest()
+    {
+        using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
 
-    //         //var logger = Mock.Of<ILogger<Puzzle01>>();
-    //         var puzzle = new Puzzle02(loggerFactory);
-    //         var result = puzzle.solve(baseFilePath + "PuzzleInputs/Day01.Puzzle01.Input.txt");
-    //         Assert.Equal(54019, result);        
-    // }    
+            //var logger = Mock.Of<ILogger<Puzzle01>>();
+            var puzzle = new Puzzle02(loggerFactory);
+            var result = puzzle.solve(baseFilePath + "PuzzleInputs/Day02.Puzzle.Input.txt");
+            Assert.Equal(71274, result);        
+    }    
 }

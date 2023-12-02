@@ -48,7 +48,7 @@ public class Puzzle02 : PuzzleInterface
       allGames.Add(game);
     }
 
-    var result = allGames.Where(bag.isValid).Select(g=>g.id).Sum();
+    var result = allGames.Select(g=>g.getPower()).Sum();
     return result;
   }
 

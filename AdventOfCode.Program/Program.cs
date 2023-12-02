@@ -10,7 +10,7 @@ class Program
         using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
         var baseDir = "/home/joe/Enlistments/advent-of-code-2023/";
         // Day 01s
-        var Day_01_01 = new AdventOfCode.Day02.Puzzle01(loggerFactory);
+        var Day_01_01 = new AdventOfCode.Day02.Puzzle02(loggerFactory);
         var result = Day_01_01.solve(baseDir + "PuzzleInputs/Day02.Puzzle.Input.txt");
         // 53998 is too low
         Console.WriteLine($"Day 02 Puzzle 01 - {result}");
