@@ -21,6 +21,8 @@ public class Puzzle01 : PuzzleInterface
    
     foreach (var line in lines)
     {
+      if(line.Length==0) continue;
+      _logger.LogInformation("Processing line {line}",line);
       Nullable<char> firstDigit = null;
       Nullable<char> lastDigit = null;
 
@@ -36,14 +38,18 @@ public class Puzzle01 : PuzzleInterface
         }        
       }
 
+      // if(firstDigit==null || lastDigit == null){
+      //   _logger.LogError("Failed to find digits in line {line}",line);
+      //     break;
+      // }
       _logger.LogInformation("Found digits {firstDigit},{lastDigit},",firstDigit,lastDigit);
       var tensDigit = char.GetNumericValue(firstDigit.GetValueOrDefault('0'))*10;
       var digit = char.GetNumericValue(lastDigit.GetValueOrDefault('0'));
       var total = (long)(tensDigit+digit);
       _logger.LogInformation("Digits combine to {total}",total);
-      var temp = runningTotal;
+      runningTotal =runningTotal+ total;      
       _logger.LogInformation("runningTotal {runningTotal}",runningTotal);
-      runningTotal += total;      
+      
     }
     return runningTotal;
   }

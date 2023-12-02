@@ -1,15 +1,17 @@
 ﻿namespace AdventOfCode.Day01;
+
+using System.Text.RegularExpressions;
 using AdventOfCode.Common;
 using Microsoft.Extensions.Logging;
 
 public class Puzzle02 : PuzzleInterface
 {
-   private readonly ILogger _logger;
+  private readonly ILogger _logger;
 
-    public Puzzle02(ILoggerFactory loggerFactory)
-    {
-        _logger = loggerFactory.CreateLogger<Puzzle01>();
-    }
+  public Puzzle02(ILoggerFactory loggerFactory)
+  {
+    _logger = loggerFactory.CreateLogger<Puzzle02>();
+  }
 
   public long solve(string filepath)
   {
@@ -18,32 +20,55 @@ public class Puzzle02 : PuzzleInterface
     var runningTotal = 0L;
 
     // i have a feeling that i'll need to parse the line into Chars for part 2 so
-   
+
     foreach (var line in lines)
     {
-      Nullable<char> firstDigit = null;
-      Nullable<char> lastDigit = null;
+      // before we process the line, we need to replace the numbers("nine") with numbers("9")
 
-      foreach (char i in line)
+      var numberReplacements = new Dictionary<string, string> {
+        { "one", "1" },
+        { "two", "2" },
+        { "three", "3" },
+        { "four", "4" },
+        { "five", "5" },
+        { "six", "6" },
+        { "seven", "7" },
+        { "eight", "8" },
+        { "nine", "9" },
+        { "[0-9]", "0" }
+      };
+
+
+      var matches = Regex.Matches(line, string.Join("|", numberReplacements.Keys));
+      string digit;
+      string match = matches.First().Value;
+
+
+      if (numberReplacements.ContainsKey(match))
       {
-        if (char.IsDigit(i))
-        {
-          if (firstDigit == null)
-          {
-            firstDigit = i;
-          }
-          lastDigit = i;
-        }        
+        digit = numberReplacements[match];
       }
+      else
+      {
+        digit = match;
+      }
+      var tensDigit = char.GetNumericValue(digit[0]) * 10;
 
-      _logger.LogInformation("Found digits {firstDigit},{lastDigit},",firstDigit,lastDigit);
-      var tensDigit = char.GetNumericValue(firstDigit.GetValueOrDefault('0'))*10;
-      var digit = char.GetNumericValue(lastDigit.GetValueOrDefault('0'));
-      var total = (long)(tensDigit+digit);
-      _logger.LogInformation("Digits combine to {total}",total);
+      match = matches.Last().Value;
+      if (numberReplacements.ContainsKey(match))
+      {
+        digit = numberReplacements[match];
+      }
+      else
+      {
+        digit = match;
+      }
+      var onesDigit = char.GetNumericValue(digit[0]);
+      var total = (long)(tensDigit + onesDigit);
+
+      _logger.LogInformation($"{line} => {total}");
       var temp = runningTotal;
-      _logger.LogInformation("runningTotal {runningTotal}",runningTotal);
-      runningTotal += total;      
+      runningTotal += total;
     }
     return runningTotal;
   }
