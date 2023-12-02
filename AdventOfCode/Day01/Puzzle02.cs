@@ -38,38 +38,64 @@ public class Puzzle02 : PuzzleInterface
         { "[0-9]", "0" }
       };
 
-
-      var matches = Regex.Matches(line, string.Join("|", numberReplacements.Keys));
-      string digit;
-      string match = matches.First().Value;
-
-
-      if (numberReplacements.ContainsKey(match))
+      var tensDigitString = "";
+      for (int i = 0; i <= line.Length; i++)
       {
-        digit = numberReplacements[match];
+        var matches = Regex.Matches(line.Substring(0, i), string.Join("|", numberReplacements.Keys));
+        if (matches.Any())
+        {
+          tensDigitString = matches.First().Value;
+          break;
+        }
       }
-      else
-      {
-        digit = match;
-      }
-      var tensDigit = char.GetNumericValue(digit[0]) * 10;
 
-      match = matches.Last().Value;
-      if (numberReplacements.ContainsKey(match))
+      var onesDigitString = "";
+      for (int i = line.Length - 1; i >= 0; i--)
       {
-        digit = numberReplacements[match];
+        var substringLength = line.Length - i;
+
+        if (substringLength < 0)
+        {
+          _logger.LogInformation($"{line} - {line.Length} - {i} = {substringLength}");
+          _logger.LogInformation($"{line} has produced an invalid index - {substringLength}");
+          throw new Exception("Something went wrong");
+        }
+
+        var substring = line.Substring(i, substringLength);
+        var matches = Regex.Matches(substring, string.Join("|", numberReplacements.Keys));
+        if (matches.Any())
+        {
+          onesDigitString = matches.First().Value;
+          break;
+        }
       }
-      else
+
+      if (String.IsNullOrEmpty(tensDigitString) || string.IsNullOrEmpty(onesDigitString))
       {
-        digit = match;
+        _logger.LogInformation($"{line} => Tens {tensDigitString} Ones {onesDigitString}");
+        throw new Exception("Something went wrong");
       }
-      var onesDigit = char.GetNumericValue(digit[0]);
+
+      if (numberReplacements.ContainsKey(tensDigitString))
+      {
+        tensDigitString = numberReplacements[tensDigitString];
+      }
+
+      var tensDigit = char.GetNumericValue(tensDigitString[0]) * 10;
+
+      if (numberReplacements.ContainsKey(onesDigitString))
+      {
+        onesDigitString = numberReplacements[onesDigitString];
+      }
+
+      var onesDigit = char.GetNumericValue(onesDigitString[0]);
       var total = (long)(tensDigit + onesDigit);
 
       _logger.LogInformation($"{line} => {total}");
       var temp = runningTotal;
       runningTotal += total;
     }
+
     return runningTotal;
   }
 }
