@@ -4,11 +4,11 @@ using System.Data;
 using AdventOfCode.Common;
 using Microsoft.Extensions.Logging;
 
-public class Puzzle01 : PuzzleInterface
+public class Puzzle02 : PuzzleInterface
 {
   private readonly ILogger _logger;
 
-  public Puzzle01(ILoggerFactory loggerFactory)
+  public Puzzle02(ILoggerFactory loggerFactory)
   {
     _logger = loggerFactory.CreateLogger<Puzzle01>();
   }
@@ -51,4 +51,6 @@ public class Puzzle01 : PuzzleInterface
     var result = allGames.Where(bag.isValid).Select(g=>g.id).Sum();
     return result;
   }
+
+
 }
