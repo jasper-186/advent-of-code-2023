@@ -37,7 +37,6 @@ public class Day07UnitTests : BaseUnitTests
 
     }
 
-
     [Fact]
     public void Puzzle02UnitTest()
     {
@@ -46,8 +45,6 @@ public class Day07UnitTests : BaseUnitTests
         var puzzle = new Puzzle02(loggerFactory);
         var result = puzzle.solve(baseFilePath + "PuzzleInputs/Day07.Puzzle.Input.txt");
 
-        Assert.True(252609753 <= result);
-        Assert.True(253067373 != result);
-        Assert.Equal(253067373, result);
+        Assert.Equal(252898370, result);
     }
 }
