@@ -4,6 +4,7 @@ using AdventOfCode.Common;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -28,7 +29,7 @@ public class Day05Context : DbContext
     // special "local" folder for your platform.
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        _connection = new SqliteConnection("Filename=:memory:");
+        _connection = new SqliteConnection("Data Source=Day05PuzzleDatabase;Mode=Memory;Cache=Shared");
         _connection.Open();
         options.UseSqlite(_connection);
     }
@@ -127,16 +128,17 @@ public class HumidityLocation
     public long LocationHigh { get; set; }
 }
 
-public interface SeedParser{
+public interface SeedParser
+{
     public abstract List<long> GetSeeds(string line);
 }
 
 public class Puzzle01SeedParser : SeedParser
 {
     public List<long> GetSeeds(string line)
-    {        
+    {
         var seedsId = line.Substring(6).Trim().Split(" ");
-        return seedsId.Select(i=>long.Parse(i)).ToList();
+        return seedsId.Select(i => long.Parse(i)).ToList();
     }
 }
 
@@ -144,7 +146,36 @@ public class Puzzle02SeedParser : SeedParser
 {
     public List<long> GetSeeds(string line)
     {
-        throw new NotImplementedException();
+        // var seedsId = line.Substring(6).Trim().Split(" ");
+        // var seedPairs = new List<Tuple<long, long>>();
+
+        // long? item1 = null;
+        // foreach (var se in seedsId.Select(i => long.Parse(i)).ToList())
+        // {
+        //     if (item1 == null)
+        //     {
+        //         item1 = se;
+        //     }
+        //     else
+        //     {
+        //         seedPairs.Add(new Tuple<long, long>(item1.Value, se));
+        //         item1 = null;
+        //     }
+        // }
+
+        // ConcurrentBag<long> seedItems = new ConcurrentBag<long>();
+        // Parallel.ForEach(seedPairs, (pair) =>
+        // {
+        //     for (int i = 0; i < pair.Item2; i++)
+        //     {
+        //         seedItems.Add(pair.Item1 + i);
+        //     }
+        // });
+
+        // var temp = seedItems.ToList();
+        // temp.Sort();
+        // return temp;
+        return new List<long>();
     }
 }
 public static class DbHelper
@@ -223,6 +254,7 @@ public static class DbHelper
             };
             db.Add(newSeedSoil);
         }
+        db.SaveChanges();
 
         //   "water-to-light map:",
         categoryHeader = lineQueue.Dequeue();
@@ -241,6 +273,7 @@ public static class DbHelper
             };
             db.Add(newSeedSoil);
         }
+        db.SaveChanges();
 
         //   "light-to-temperature map:",        
         categoryHeader = lineQueue.Dequeue();
@@ -259,6 +292,7 @@ public static class DbHelper
             };
             db.Add(newSeedSoil);
         }
+        db.SaveChanges();
 
         //   "temperature-to-humidity map:",
         categoryHeader = lineQueue.Dequeue();
@@ -277,6 +311,7 @@ public static class DbHelper
             };
             db.Add(newSeedSoil);
         }
+        db.SaveChanges();
 
         //   "humidity-to-location map:",
         categoryHeader = lineQueue.Dequeue();
@@ -302,7 +337,7 @@ public static class DbHelper
     public static long getMappedSoilId(long seedId, Day05Context db)
     {
         // "seed-to-soil map:",
-        var soil = db.SeedSoils.Where(i => i.SeedLow < seedId && i.SeedHigh > seedId).FirstOrDefault();
+        var soil = db.SeedSoils.Where(i => i.SeedLow <= seedId && i.SeedHigh >= seedId).FirstOrDefault();
         // if the soil is not mapped, add the mapping
         if (soil == null)
         {
@@ -313,8 +348,8 @@ public static class DbHelper
                 SoilLow = seedId,
                 SoilHigh = seedId,
             };
-            db.Add(soil);
-            db.SaveChanges();
+            // db.Add(soil);
+            // db.SaveChanges();
         }
 
         var temp = seedId - soil.SeedLow;
@@ -325,7 +360,7 @@ public static class DbHelper
     public static long getMappedFertilizerId(long soilId, Day05Context db)
     {
         //"soil-to-fertilizer map:",
-        var fertilizer = db.SoilFertilizers.Where(i => i.SoilLow < soilId && i.SoilHigh > soilId).FirstOrDefault();
+        var fertilizer = db.SoilFertilizers.Where(i => i.SoilLow <= soilId && i.SoilHigh >= soilId).FirstOrDefault();
 
         // if the soil is not mapped, add the mapping
         if (fertilizer == null)
@@ -337,8 +372,8 @@ public static class DbHelper
                 SoilLow = soilId,
                 SoilHigh = soilId,
             };
-            db.Add(fertilizer);
-            db.SaveChanges();
+            // db.Add(fertilizer);
+            // db.SaveChanges();
         }
 
         var temp = soilId - fertilizer.SoilLow;
@@ -349,7 +384,7 @@ public static class DbHelper
     public static long getMappedWaterId(long fertilizerId, Day05Context db)
     {
         //   "fertilizer-to-water map:",
-        var water = db.FertilizerWaters.Where(i => i.FertilizerLow < fertilizerId && i.FertilizerHigh > fertilizerId).FirstOrDefault();
+        var water = db.FertilizerWaters.Where(i => i.FertilizerLow <= fertilizerId && i.FertilizerHigh >= fertilizerId).FirstOrDefault();
 
         // if the soil is not mapped, add the mapping
         if (water == null)
@@ -361,8 +396,8 @@ public static class DbHelper
                 WaterLow = fertilizerId,
                 WaterHigh = fertilizerId,
             };
-            db.Add(water);
-            db.SaveChanges();
+            // db.Add(water);
+            // db.SaveChanges();
         }
 
         var temp = fertilizerId - water.FertilizerLow;
@@ -373,7 +408,7 @@ public static class DbHelper
     public static long getMappedLightId(long waterId, Day05Context db)
     {
         //   "water-to-light map:",
-        var light = db.WaterLights.Where(i => i.WaterLow < waterId && i.WaterHigh > waterId).FirstOrDefault();
+        var light = db.WaterLights.Where(i => i.WaterLow <= waterId && i.WaterHigh >= waterId).FirstOrDefault();
 
         // if the soil is not mapped, add the mapping
         if (light == null)
@@ -385,8 +420,8 @@ public static class DbHelper
                 WaterLow = waterId,
                 WaterHigh = waterId,
             };
-            db.Add(light);
-            db.SaveChanges();
+            // db.Add(light);
+            // db.SaveChanges();
         }
 
         var temp = waterId - light.WaterLow;
@@ -397,7 +432,7 @@ public static class DbHelper
     public static long getMappedTemperatureId(long lightId, Day05Context db)
     {
         //   "water-to-light map:",
-        var temperature = db.LightTemperatures.Where(i => i.LightLow < lightId && i.LightHigh > lightId).FirstOrDefault();
+        var temperature = db.LightTemperatures.Where(i => i.LightLow <= lightId && i.LightHigh >= lightId).FirstOrDefault();
 
         // if the soil is not mapped, add the mapping
         if (temperature == null)
@@ -409,8 +444,8 @@ public static class DbHelper
                 TemperatureLow = lightId,
                 TemperatureHigh = lightId,
             };
-            db.Add(temperature);
-            db.SaveChanges();
+            // db.Add(temperature);
+            // db.SaveChanges();
         }
 
         var temp = lightId - temperature.LightLow;
@@ -421,7 +456,7 @@ public static class DbHelper
     public static long getMappedHumidityId(long temperatureId, Day05Context db)
     {
         //   "water-to-light map:",
-        var humidity = db.TemperatureHumiditys.Where(i => i.TemperatureLow < temperatureId && i.TemperatureHigh > temperatureId).FirstOrDefault();
+        var humidity = db.TemperatureHumiditys.Where(i => i.TemperatureLow <= temperatureId && i.TemperatureHigh >= temperatureId).FirstOrDefault();
 
         // if the soil is not mapped, add the mapping
         if (humidity == null)
@@ -433,8 +468,8 @@ public static class DbHelper
                 TemperatureLow = temperatureId,
                 TemperatureHigh = temperatureId,
             };
-            db.Add(humidity);
-            db.SaveChanges();
+            // db.Add(humidity);
+            // db.SaveChanges();
         }
 
         var temp = temperatureId - humidity.TemperatureLow;
@@ -445,7 +480,7 @@ public static class DbHelper
     public static long getMappedLocationId(long humidityId, Day05Context db)
     {
         //   "water-to-light map:",
-        var location = db.HumidityLocations.Where(i => i.HumidityLow < humidityId && i.HumidityHigh > humidityId).FirstOrDefault();
+        var location = db.HumidityLocations.Where(i => i.HumidityLow <= humidityId && i.HumidityHigh >= humidityId).FirstOrDefault();
 
         // if the soil is not mapped, add the mapping
         if (location == null)
@@ -457,13 +492,12 @@ public static class DbHelper
                 LocationLow = humidityId,
                 LocationHigh = humidityId,
             };
-            db.Add(location);
-            db.SaveChanges();
+            // db.Add(location);
+            // db.SaveChanges();
         }
 
         var temp = humidityId - location.HumidityLow;
         var locationId = location.LocationLow + temp;
         return locationId;
     }
-
 }

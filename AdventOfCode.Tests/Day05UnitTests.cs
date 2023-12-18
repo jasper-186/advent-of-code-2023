@@ -26,25 +26,27 @@ public class Day05UnitTests : BaseUnitTests
             Assert.Equal(910845529, result);
     }
 
-    // [Fact]
-    // public void Puzzle02SampleUnitTest()
-    // {
-    //     using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+    [Fact(Skip="This Test Takes 15+ minutes, re-write the program to do it")]
+    public void Puzzle02SampleUnitTest()
+    {
+        using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
 
-    //         //var logger = Mock.Of<ILogger<Puzzle01>>();
-    //         var puzzle = new Puzzle02(loggerFactory);
-    //         var result = puzzle.solve(baseFilePath + "SampleInputs/Day04.Puzzle01.Input.Sample.txt");
-    //         Assert.Equal(30, result);        
-    // }    
+            //var logger = Mock.Of<ILogger<Puzzle01>>();
+            var puzzle = new Puzzle02(loggerFactory);
+            var result = puzzle.solve(baseFilePath + "SampleInputs/Day05.Puzzle01.Input.Sample.txt");
+            Assert.Equal(46, result);        
+    }    
 
-    // [Fact]
-    // public void Puzzle02PuzzleUnitTest()
-    // {
-    //     using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+    [Fact(Skip="This Test Takes 15+ minutes, re-write the program to do it")]
+    public void Puzzle02PuzzleUnitTest()
+    {
+        using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
 
-    //         //var logger = Mock.Of<ILogger<Puzzle01>>();
-    //         var puzzle = new Puzzle02(loggerFactory);
-    //         var result = puzzle.solve(baseFilePath + "PuzzleInputs/Day04.Puzzle.Input.txt");
-    //         Assert.Equal(14624680, result);        
-    // }    
+            //var logger = Mock.Of<ILogger<Puzzle01>>();
+            var puzzle = new Puzzle02(loggerFactory);
+            var result = puzzle.solve(baseFilePath + "PuzzleInputs/Day05.Puzzle.Input.txt");
+
+            Assert.True(2147483647>result);
+            Assert.Equal(14624680, result);        
+    }    
 }

@@ -25,26 +25,68 @@ public class Puzzle02 : PuzzleInterface
         DbHelper.Load(filepath, parser, db);
       }
 
+      // Seeds can't be loaded via a database parser due to size
+      var lineQueue = new Queue<String>(FileUtils.ReadFileLines(filepath));
+      var seedRanges = lineQueue.Dequeue();
+      lineQueue = null;
+      var seedQueue = new Queue<string>(seedRanges.Substring(6).Trim().Split(" "));
+
       long lowestLocation = int.MaxValue;
-      foreach (var seed in db.Seeds)
+      object locationLock = new object();
+
+      while (seedQueue.Count() > 0)
       {
-        var soilId = DbHelper.getMappedSoilId(seed.SeedId, db);
-        var fertilizerId = DbHelper.getMappedFertilizerId(soilId, db);
-        var waterId = DbHelper.getMappedWaterId(fertilizerId, db);
-        var lightId = DbHelper.getMappedLightId(waterId, db);
-        var temperatureId = DbHelper.getMappedTemperatureId(lightId, db);
-        var humidityId = DbHelper.getMappedHumidityId(temperatureId, db);
-        var locationId = DbHelper.getMappedLocationId(humidityId, db);
-        if (locationId < lowestLocation)
+        var seedStartRange = long.Parse(seedQueue.Dequeue());
+        var seedRangeLength = long.Parse(seedQueue.Dequeue());
+        var seedEndRange = seedStartRange + seedRangeLength;
+        Parallel.For(seedStartRange, seedEndRange, new ParallelOptions() { MaxDegreeOfParallelism = 4 }, s =>
         {
-          lowestLocation = locationId;
-        }
+          var dbp = new Day05Context();
+          var locationId = GetSeedLocation(s, dbp);
+          // is the one i have lower?
+          if (locationId < lowestLocation)
+          {
+            // Grab the lock
+            lock (locationLock)
+            {
+              // Is it Still lower after grabbing the lock?
+              if (locationId < lowestLocation)
+              {
+                lowestLocation = locationId;
+              }
+            }
+          }
+        });
       }
 
       //db.Database.EnsureDeleted();
       return lowestLocation;
     }
+
   }
 
+  public long GetSeedLocation(long seedId, Day05Context db)
+  {
+    _logger.LogTrace($"Seed Id: {seedId}");
+    var soilId = DbHelper.getMappedSoilId(seedId, db);
+    _logger.LogTrace($"Soil Id: {soilId}");
+    var fertilizerId = DbHelper.getMappedFertilizerId(soilId, db);
+    _logger.LogTrace($"Fertilizer Id: {fertilizerId}");
+    var waterId = DbHelper.getMappedWaterId(fertilizerId, db);
+    _logger.LogTrace($"Water Id: {waterId}");
+    var lightId = DbHelper.getMappedLightId(waterId, db);
+    _logger.LogTrace($"Light Id: {lightId}");
+    var temperatureId = DbHelper.getMappedTemperatureId(lightId, db);
+    _logger.LogTrace($"Temperature Id: {temperatureId}");
+    var humidityId = DbHelper.getMappedHumidityId(temperatureId, db);
+    _logger.LogTrace($"Humidity Id: {humidityId}");
+    var locationId = DbHelper.getMappedLocationId(humidityId, db);
 
+    _logger.LogTrace($"Location Id: {locationId}");
+
+    return locationId;
+  }
 }
+
+
+
