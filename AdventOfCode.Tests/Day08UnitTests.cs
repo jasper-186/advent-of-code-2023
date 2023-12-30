@@ -55,6 +55,6 @@ public class Day08UnitTests : BaseUnitTests
         var puzzle = new Puzzle02(loggerFactory);
         var result = puzzle.solve(baseFilePath + "PuzzleInputs/Day08.Puzzle.Input.txt");
 
-        Assert.Equal(252898370, result);
+        Assert.Equal(22103062509257, result);
     }
 }

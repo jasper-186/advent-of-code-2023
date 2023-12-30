@@ -31,32 +31,59 @@ public class HauntedNetwork
     public long TraversePath()
     {
         var current = "AAA";
-        var index=0;
-        while(current!="ZZZ"){
-            var path_ind = index%this.path.Length;
-            var path_char=path[path_ind].ToString();
-            current=Network[current][path_char];
+        var index = 0;
+        while (current != "ZZZ")
+        {
+            var path_ind = index % this.path.Length;
+            var path_char = path[path_ind].ToString();
+            current = Network[current][path_char];
             index++;
         }
         return index;
     }
 
-public long TraverseAllPath()
+    public long TraverseAllPath()
     {
-        var current = Network.Keys.Where(i=>i.EndsWith("A")).ToArray();
-        var index=0L;
-        while(current.Any(i=>!i.EndsWith("Z"))){
-            var path_ind =(int) (index%this.path.Length);
-            var path_char=path[path_ind].ToString();
-            for(var i=0;i<current.Length;i++){
-                current[i]=Network[current[i]][path_char];            
+        var current = Network.Keys.Where(i => i.EndsWith("A")).ToArray();
+        var current_locations = new Dictionary<String, long>();
+
+        foreach (var c in current)
+        {
+            var cu = c;
+            var index = 0;
+            while (!cu.EndsWith("Z"))
+            {
+                var path_ind = index % this.path.Length;
+                var path_char = path[path_ind].ToString();
+                cu = Network[cu][path_char];
+                index++;
             }
-            index++;
-            if(index<0){
-                throw new InvalidOperationException("Index cannot be less then 0");
-            }
+            current_locations.Add(c, index);
         }
-        return index;
+
+        // basically, we can find the distance each thing takes to walk from start to end, then find the Least Common multiple for whne those things overlap (since it loops)
+        return lcm(current_locations.Values);
+    }
+
+    static long lcm(IEnumerable<long> list)
+    {
+        return list.Aggregate(lcm);
+    }
+
+    static long gcf(long a, long b)
+    {
+        while (b != 0)
+        {
+            long temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
+    static long lcm(long a, long b)
+    {
+        return (a / gcf(a, b)) * b;
     }
 }
 
