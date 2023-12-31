@@ -9,7 +9,7 @@ public class Puzzle02 : PuzzleInterface
 
   public Puzzle02(ILoggerFactory loggerFactory)
   {
-    _logger = loggerFactory.CreateLogger<Puzzle01>();
+    _logger = loggerFactory.CreateLogger<Puzzle02>();
   }
     public long solve(string filepath)
     {
